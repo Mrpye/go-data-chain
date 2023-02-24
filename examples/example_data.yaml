@@ -1,0 +1,40 @@
+data:
+  arrays:
+    - "array_string_1"
+    - "array_string_2"
+    - "array_string_3"
+  maps:
+    map_string_1: "map_string_1"
+    map_string_2: "map_string_2"
+    map_string_3: "map_string_3"
+  convert_bool:
+    string_bool_true: "true"
+    string_bool_false: "false"
+    string_bool_y: "y"
+    string_bool_n: "n"
+    string_bool_1: "1"
+    string_bool_0: "0"
+    string_bool_yes: "yes"
+    string_bool_no: "no"
+    string_bool_pass: "pass"
+    string_bool_fail: "fail"
+  convert_int:
+    float_int: 1.56
+    string_int: "2"
+    int_int: 3
+    bool_int_true: true
+    bool_int_false: false
+  convert_float:
+    float_float: 1.56
+    string_float: "1.56"
+    int_float: 5
+    bool_float_true: true
+    bool_float_false: false
+  convert_string:
+    float_string: 1.56
+    string_string: "string"
+    int_string: 5
+    bool_string_true: true
+    bool_string_false: false
+  convert_map:
+  
