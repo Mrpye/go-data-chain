@@ -189,7 +189,7 @@ string
 
 ---
 
-## go-data-chain documentation
+## go-data-chain Methods
 
 ```go
 //Data type 
@@ -247,8 +247,12 @@ ToInt32() int32
 ToInt64() int64
 
 ```
-
+## Todo: 
+- Look at a way to handle errors
 ---
+## Issues
+- When chaining the methods there is current no way to catch errors if an nil is returned, This crash the program out. To get round this is to return the item to a variable and check if null or array is empty.
+
 
 ## Change Log
 ### v0.1.0
