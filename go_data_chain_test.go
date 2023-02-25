@@ -26,7 +26,7 @@ func TestGetArrayItem(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	chain := CreateDataChain(test_data)
+	chain := CreateDataChain(test_data, false)
 	chain_item := chain.GetMapItem("data").GetMapItem("arrays")
 	tests := []struct {
 		name string
@@ -58,7 +58,7 @@ func TestGetArrayItem(t *testing.T) {
 	}
 }
 
-func TestGetArray(t *testing.T) {
+func TestToArray(t *testing.T) {
 	var test_data interface{}
 
 	file, _ := ioutil.ReadFile("examples/example_data.yaml")
@@ -66,7 +66,7 @@ func TestGetArray(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	chain := CreateDataChain(test_data)
+	chain := CreateDataChain(test_data, false)
 	chain_item := chain.GetMapItem("data").GetMapItem("arrays")
 	tests := []struct {
 		name string
@@ -91,7 +91,7 @@ func TestGetArray(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := chain_item.GetArray()[tt.args].ToString(); !reflect.DeepEqual(got, tt.want) {
+			if got := chain_item.ToArray()[tt.args].ToString(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("CreateDataChain() = %v, want %v", got, tt.want)
 			}
 		})
@@ -105,7 +105,7 @@ func TestGetArrayCount(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	chain := CreateDataChain(test_data)
+	chain := CreateDataChain(test_data, false)
 	chain_item := chain.GetMapItem("data").GetMapItem("arrays")
 	tests := []struct {
 		name string
@@ -133,7 +133,7 @@ func TestGetMapItem(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	chain := CreateDataChain(test_data)
+	chain := CreateDataChain(test_data, false)
 	chain_item := chain.GetMapItem("data").GetMapItem("maps")
 	tests := []struct {
 		name string
@@ -173,7 +173,7 @@ func TestToBool(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	chain := CreateDataChain(test_data)
+	chain := CreateDataChain(test_data, false)
 	chain_item := chain.GetMapItem("data").GetMapItem("convert_bool")
 	tests := []struct {
 		name string
@@ -248,7 +248,7 @@ func TestToInt(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	chain := CreateDataChain(test_data)
+	chain := CreateDataChain(test_data, false)
 	chain_item := chain.GetMapItem("data").GetMapItem("convert_int")
 	tests := []struct {
 		name string
@@ -293,7 +293,7 @@ func TestToInt8(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	chain := CreateDataChain(test_data)
+	chain := CreateDataChain(test_data, false)
 	chain_item := chain.GetMapItem("data").GetMapItem("convert_int")
 	tests := []struct {
 		name string
@@ -339,7 +339,7 @@ func TestToInt32(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	chain := CreateDataChain(test_data)
+	chain := CreateDataChain(test_data, false)
 	chain_item := chain.GetMapItem("data").GetMapItem("convert_int")
 	tests := []struct {
 		name string
@@ -385,7 +385,7 @@ func TestToInt64(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	chain := CreateDataChain(test_data)
+	chain := CreateDataChain(test_data, false)
 	chain_item := chain.GetMapItem("data").GetMapItem("convert_int")
 	tests := []struct {
 		name string
@@ -430,7 +430,7 @@ func TestToFloat32(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	chain := CreateDataChain(test_data)
+	chain := CreateDataChain(test_data, false)
 	chain_item := chain.GetMapItem("data").GetMapItem("convert_float")
 	tests := []struct {
 		name string
@@ -481,7 +481,7 @@ func TestToFloat64(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	chain := CreateDataChain(test_data)
+	chain := CreateDataChain(test_data, false)
 	chain_item := chain.GetMapItem("data").GetMapItem("convert_float")
 	tests := []struct {
 		name string
@@ -532,7 +532,7 @@ func TestToString(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	chain := CreateDataChain(test_data)
+	chain := CreateDataChain(test_data, false)
 	chain_item := chain.GetMapItem("data").GetMapItem("convert_string")
 	tests := []struct {
 		name string
