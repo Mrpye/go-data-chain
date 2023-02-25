@@ -1,8 +1,5 @@
-// go-data-chain
-// Created: 24/02/2023
-// Written by: Andrew Pye
-//Package to allow navigation of inteface{} data types in a generic way
-//with auto conversion to the correct type where possible
+// Package to allow navigation of inteface{} data types in a generic way
+// with auto conversion to the correct type where possible
 package go_data_chain
 
 import (
@@ -14,7 +11,20 @@ import (
 
 //Data is a struct that can hold any type of data
 type Data struct {
-	value interface{}
+	Err    error
+	parent interface{}
+	value  interface{}
+}
+
+// CreateDynamicData creates a new Data object
+// - value: the value to set
+// - safe: if true the chain will not crash if the data does not exist
+func CreateDataChain(value interface{}, safe bool) *Data {
+	data := Data{value: value}
+	if safe {
+		data.parent = &data
+	}
+	return &data
 }
 
 // GetType returns the type of the data as a string
@@ -264,26 +274,13 @@ func (m *Data) ToBool() bool {
 	}
 }
 
-// GetInterface returns the data as an interface{}
-func (m *Data) GetInterface() interface{} {
+// ToInterface returns the data as an interface{}
+func (m *Data) ToInterface() interface{} {
 	return m.value
 }
 
-// GetMapItem gets a map item by key
-// - Key: the key to get
-// returns a Data object if the key exists or nil if it does not
-func (m *Data) GetMapItem(key string) *Data {
-	if m.value != nil && reflect.TypeOf(m.value).Kind() == reflect.Map {
-		if m.value.(map[string]interface{})[key] != nil {
-			return &Data{value: m.value.(map[string]interface{})[key]}
-		}
-	}
-	return nil
-}
-
-// GetMap returns the data as a map
-// returns a map of Data objects
-func (m *Data) GetMap() map[string]Data {
+// ToMap returns the data as a map
+func (m *Data) ToMap() map[string]Data {
 	//check if the value is a map
 	if m.value != nil && reflect.TypeOf(m.value).Kind() == reflect.Map {
 		items := make(map[string]Data)
@@ -295,9 +292,8 @@ func (m *Data) GetMap() map[string]Data {
 	return nil
 }
 
-// GetArray returns the data as an array
-// returns an array of Data objects
-func (m *Data) GetArray() []Data {
+// ToArray returns the data as an array
+func (m *Data) ToArray() []Data {
 	var items []Data
 	k := reflect.TypeOf(m.value).Kind()
 	//check if the value is an array
@@ -311,13 +307,30 @@ func (m *Data) GetArray() []Data {
 	return items
 }
 
-// GetArrayCount returns the number of items in the array
-func (m *Data) GetArrayCount() int {
-	//check if the value is an array
-	if m.value != nil && reflect.TypeOf(m.value).Kind() == reflect.Slice {
-		return len(m.value.([]interface{}))
+// GetMapItem gets a map item by key
+// - Key: the key to get
+// returns a Data object if the key exists or nil if it does not
+func (m *Data) GetMapItem(key string) *Data {
+	if m.value != nil && reflect.TypeOf(m.value).Kind() == reflect.Map {
+		if m.value.(map[string]interface{})[key] != nil {
+			return &Data{value: m.value.(map[string]interface{})[key], parent: m.parent}
+		} else {
+			if m.parent != nil {
+				//Make so it doesn't panic
+				t_data := m.parent.(*Data)
+				t_data.Err = fmt.Errorf("%v key `%s` does not exist;", m.cleanError(t_data.Err), key)
+				return &Data{value: nil, parent: m.parent}
+			}
+		}
+	} else {
+		if m.parent != nil {
+			//Make so it doesn't panic
+			t_data := m.parent.(*Data)
+			t_data.Err = fmt.Errorf("%vmap with key `%s` does not exist; ", m.cleanError(t_data.Err), key)
+			return &Data{value: nil, parent: m.parent}
+		}
 	}
-	return 0
+	return nil
 }
 
 // GetArrayItem returns an item from the array
@@ -327,15 +340,47 @@ func (m *Data) GetArrayItem(index int) *Data {
 	k := reflect.TypeOf(m.value).Kind()
 	if m.value != nil && (k == reflect.Slice || k == reflect.Array) {
 		if len(m.value.([]interface{})) > index {
-			return &Data{value: m.value.([]interface{})[index]}
+			return &Data{value: m.value.([]interface{})[index], parent: m.parent}
+		} else {
+			if m.parent != nil {
+				//Make so it doesn't panic
+				t_data := m.parent.(*Data)
+				t_data.Err = fmt.Errorf("%vindex out of range: `%v`; ", m.cleanError(t_data.Err), index)
+				return &Data{value: nil, parent: m.parent}
+			}
+		}
+	} else {
+		if m.parent != nil {
+			//Make so it doesn't panic
+			t_data := m.parent.(*Data)
+			t_data.Err = fmt.Errorf("%vnot an array: `%v`; ", m.cleanError(t_data.Err), k)
+			return &Data{value: nil, parent: m.parent}
 		}
 	}
 	return m
 }
 
-// CreateDynamicData creates a new Data object
-// - value: the value to set
-func CreateDataChain(value interface{}) *Data {
-	data := Data{value: value}
-	return &data
+// GetArrayCount returns the number of items in the array
+func (m *Data) GetArrayCount() int {
+	//check if the value is an array
+	if m.value != nil && reflect.TypeOf(m.value).Kind() == reflect.Slice {
+		return len(m.value.([]interface{}))
+	} else {
+		if m.parent != nil {
+			//Make so it doesn't panic
+			t_data := m.parent.(*Data)
+			t_data.Err = fmt.Errorf("%vnot an array; ", m.cleanError(t_data.Err))
+		}
+	}
+	return 0
+}
+
+// cleanError cleans the error
+// - err: the error to clean
+// returns the error as a string
+func (m *Data) cleanError(err error) string {
+	if err != nil {
+		return err.Error()
+	}
+	return ""
 }
